@@ -67,7 +67,7 @@ public final class FlRFirstAnimationVC: UIViewController {
     weak var delegate: SpecialAnimationDelegate?
     public var isPaid: Bool {
         didSet {
-            protectionSwitch.isOn = isPaid
+            checkToggleState()
         }
     }
     
@@ -100,6 +100,14 @@ public final class FlRFirstAnimationVC: UIViewController {
             ScreenShield.shared.protect(view: self.lastScanLabel)
             ScreenShield.shared.protect(view: self.protectionSwitch)
             ScreenShield.shared.protectFromScreenRecording()
+        }
+    }
+    
+    private func checkToggleState() {
+        if isPaid, let state = Storage.toggleState {
+            protectionSwitch.isOn = state
+        } else {
+            protectionSwitch.isOn = false
         }
     }
 
@@ -207,7 +215,8 @@ public final class FlRFirstAnimationVC: UIViewController {
         labelStack.spacing = 2
         labelStack.translatesAutoresizingMaskIntoConstraints = false
         
-        protectionSwitch.isOn = isPaid
+//        protectionSwitch.isOn = isPaid
+        checkToggleState()
         protectionSwitch.addTarget(self, action: #selector(protectionSwitchChanged(_:)), for: .valueChanged)
         protectionSwitch.translatesAutoresizingMaskIntoConstraints = false
 
@@ -302,8 +311,12 @@ public final class FlRFirstAnimationVC: UIViewController {
     // MARK: - Actions
 
     @objc private func protectionSwitchChanged(_ sender: UISwitch) {
-        guard !isPaid else { return }
-        
+        guard !isPaid else {
+            Storage.toggleState = sender.isOn
+            
+            return
+        }
+                
         self.delegate?.buttonTapped(isResult: true, fl1IsSecond: false, premium: nil)
         sender.setOn(false, animated: true)
     }

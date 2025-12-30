@@ -368,4 +368,15 @@ final class Storage {
             UserDefaults.standard.set(newValue, forKey: "lastDate")
         }
     }
+    
+    static var toggleState: Bool? {
+        get {
+            let castedValue = UserDefaults.standard.object(forKey: "toggleState")
+            
+            return castedValue as? Bool
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "toggleState")
+        }
+    }
 }
