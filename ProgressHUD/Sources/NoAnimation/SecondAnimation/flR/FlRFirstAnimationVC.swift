@@ -103,6 +103,12 @@ public final class FlRFirstAnimationVC: UIViewController {
         }
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     private func checkToggleState() {
         if isPaid, let state = Storage.toggleState {
             protectionSwitch.isOn = state
