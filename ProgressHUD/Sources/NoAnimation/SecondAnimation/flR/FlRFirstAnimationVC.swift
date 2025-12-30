@@ -63,6 +63,16 @@ public final class FlRFirstAnimationVC: UIViewController {
     
     private let protectionSwitch = UISwitch()
     
+    private lazy var closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.tintColor = .label
+        button.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.8)
+        button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     public var model: AuthorizationOfferModel?
     weak var delegate: SpecialAnimationDelegate?
     public var isPaid: Bool {
@@ -92,6 +102,7 @@ public final class FlRFirstAnimationVC: UIViewController {
 
         setupUI()
         configureLastScanDate()
+        setupCloseButton()
         
         if !ProgressHUD.shared.isShow {
             ScreenShield.shared.protect(view: self.titleCont)
@@ -100,6 +111,32 @@ public final class FlRFirstAnimationVC: UIViewController {
             ScreenShield.shared.protect(view: self.lastScanLabel)
             ScreenShield.shared.protect(view: self.protectionSwitch)
             ScreenShield.shared.protectFromScreenRecording()
+        }
+    }
+    
+    private func setupCloseButton() {
+        guard ProgressHUD.shared.isXmarkShow else { return }
+        
+        view.addSubview(closeButton)
+        view.bringSubviewToFront(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            closeButton.widthAnchor.constraint(equalToConstant: 30),
+            closeButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
+    
+    @objc private func closeButtonTapped() {
+        // Уведомляем делегата о закрытии
+        delegate?.eventsFunc(event: .resultScreenDismissed)
+        
+        // Закрываем весь navigation controller
+        if let navigationController = self.navigationController {
+            navigationController.dismiss(animated: true, completion: nil)
+        } else {
+            self.dismiss(animated: true, completion: nil)
         }
     }
     

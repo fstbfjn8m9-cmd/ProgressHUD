@@ -57,4 +57,5 @@ public enum EventsName: String {
     case featureAction = "feature_action"
     
     case closeTapped
+    case resultScreenDismissed = "result_screen_dismissed"
 }
